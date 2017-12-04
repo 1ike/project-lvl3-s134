@@ -62,9 +62,7 @@ test('savePage: wrong path', () => {
   expect.assertions(1);
 
   return savePage(inputURL, outputPath)
-    .then(() => fs.readFile(path.join(dir, fixture), 'utf8'))
-    .then(html => fs.readFile(path.join(outputPath, testFileName), 'utf8')
-      .catch((e) => {
-        expect(e.code).toBe('ENOENT');
-      }));
+    .catch((e) => {
+      expect(e.code).toBe('ENOENT');
+    });
 });

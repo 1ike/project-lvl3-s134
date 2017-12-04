@@ -34,9 +34,6 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
     })
     .then(() => {
       console.log(`Page was downloaded as '${name}'`);
-    })
-    .catch((err) => {
-      console.log(err.message);
     });
 
   return result;
