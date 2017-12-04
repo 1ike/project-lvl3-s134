@@ -33,7 +33,7 @@
     "prepublishOnly": "npm run build",
     "eslint:init": "eslint --init",
     "eslint": "eslint",
-    "test": "jest",
+    "test": "jest --coverage",
     "test-watch": "jest --watchAll"
   },
   "jest": {
