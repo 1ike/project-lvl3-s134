@@ -2,6 +2,7 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/11369a6982008fc1906e/maintainability)](https://codeclimate.com/github/1ike/project-lvl3-s134/maintainability)
 [![Build Status](https://travis-ci.org/1ike/project-lvl3-s134.svg?branch=master)](https://travis-ci.org/1ike/project-lvl3-s134)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/11369a6982008fc1906e/test_coverage)](https://codeclimate.com/github/1ike/project-lvl3-s134/test_coverage)
 
 Save web page for offline using (like "Save as" in browsers).
 
