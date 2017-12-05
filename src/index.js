@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const renderName = (inputURL) => {
   const urlObject = url.parse(inputURL);
-  const stage1 = urlObject.hostname + urlObject.pathname;
+  const stage1 = `${urlObject.hostname}${urlObject.pathname}`;
   const stage2 = stage1.replace(/[^a-zA-Z0-9]+/g, '-');
   const stage3 = stage2.replace(/-$/g, '');
 
@@ -34,6 +34,10 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
     })
     .then(() => {
       console.log(`Page was downloaded as '${name}'`);
+    })
+    .catch((e) => {
+      console.log(e.message);
+      throw e;
     });
 
   return result;

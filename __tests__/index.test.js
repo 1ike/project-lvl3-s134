@@ -14,46 +14,55 @@ const dir = path.join(__dirname, '/__fixtures__');
 const fixture = 'test.html';
 
 const testFileName = 'tpverstak-github-io.html';
-const testFolder = fs.mkdtempSync(path.join(os.tmpdir(), 'test-'));
-const pathToFile = path.join(testFolder, testFileName);
 const defaultPathToFile = path.join(process.cwd(), testFileName);
+let testFolder;
+let pathToFile;
+let html;
 
-beforeEach(() => fs.readFile(path.join(dir, fixture), 'utf8')
-  .then((html) => {
-    nock(inputURL)
-      .get('/')
-      .reply(200, html);
-  }));
+beforeAll(() => {
+  testFolder = fs.mkdtempSync(path.join(os.tmpdir(), 'test-'));
+  pathToFile = path.join(testFolder, testFileName);
+  return fs.readFile(path.join(dir, fixture), 'utf8')
+    .then((data) => {
+      html = data;
+    });
+});
+
+beforeEach(() => nock(inputURL).get('/').reply(200, html));
 
 afterEach(() => fs.exists(pathToFile)
   .then((exist) => {
-    if (exist) fs.unlink(pathToFile);
+    if (exist) {
+      return fs.unlink(pathToFile);
+    }
+    return false;
   })
   .then(() => fs.exists(defaultPathToFile))
   .then((exist) => {
-    if (exist) fs.unlink(defaultPathToFile);
+    if (exist) {
+      return fs.unlink(defaultPathToFile);
+    }
+    return false;
   }));
 
 test('savePage: saving', () => {
   expect.assertions(1);
 
   return savePage(inputURL, testFolder)
-    .then(() => fs.readFile(path.join(dir, fixture), 'utf8'))
-    .then(html => fs.readFile(pathToFile, 'utf8')
-      .then((data) => {
-        expect(data).toBe(html);
-      }));
+    .then(() => fs.readFile(pathToFile, 'utf8'))
+    .then((data) => {
+      expect(data).toBe(html);
+    });
 });
 
 test('savePage: saving default', () => {
   expect.assertions(1);
 
   return savePage(inputURL)
-    .then(() => fs.readFile(path.join(dir, fixture), 'utf8'))
-    .then(html => fs.readFile(defaultPathToFile, 'utf8')
-      .then((data) => {
-        expect(data).toBe(html);
-      }));
+    .then(() => fs.readFile(defaultPathToFile, 'utf8'))
+    .then((data) => {
+      expect(data).toBe(html);
+    });
 });
 
 test('savePage: wrong path', () => {
