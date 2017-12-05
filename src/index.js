@@ -7,10 +7,12 @@ import axios from 'axios';
 // import cheerio from 'cheerio';
 // import Listr from 'listr';
 
+const transformUrlToName = inputURL => inputURL.replace(/[^a-zA-Z0-9]+/g, '-');
+
 const renderName = (inputURL) => {
-  const urlObject = url.parse(inputURL);
-  const stage1 = `${urlObject.hostname}${urlObject.pathname}`;
-  const stage2 = stage1.replace(/[^a-zA-Z0-9]+/g, '-');
+  const { hostname, pathname } = url.parse(inputURL);
+  const stage1 = `${hostname}${pathname}`;
+  const stage2 = transformUrlToName(stage1);
   const stage3 = stage2.replace(/-$/g, '');
 
   return `${stage3}.html`;
@@ -21,16 +23,9 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
 
   const result = axios.get(inputURL)
     .then((response) => {
-      if (response.status !== 200) {
-        throw new Error(`Expected 200, but was ${response.status} for '${inputURL}'`);
-      }
-
-      return response.data;
-    })
-    .then((html) => {
       const pathToFile = path.join(outputPath, name);
 
-      return fs.writeFile(pathToFile, html);
+      return fs.writeFile(pathToFile, response.data);
     })
     .then(() => {
       console.log(`Page was downloaded as '${name}'`);
