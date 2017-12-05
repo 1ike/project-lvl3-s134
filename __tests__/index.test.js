@@ -19,14 +19,15 @@ let testFolder;
 let pathToFile;
 let html;
 
-beforeAll(() => {
-  testFolder = fs.mkdtempSync(path.join(os.tmpdir(), 'test-'));
-  pathToFile = path.join(testFolder, testFileName);
-  return fs.readFile(path.join(dir, fixture), 'utf8')
-    .then((data) => {
-      html = data;
-    });
-});
+beforeAll(() => fs.mkdtemp(path.join(os.tmpdir(), 'test-'))
+  .then((folder) => {
+    testFolder = folder;
+    pathToFile = path.join(testFolder, testFileName);
+  })
+  .then(() => fs.readFile(path.join(dir, fixture), 'utf8'))
+  .then((data) => {
+    html = data;
+  }));
 
 beforeEach(() => nock(inputURL).get('/').reply(200, html));
 
