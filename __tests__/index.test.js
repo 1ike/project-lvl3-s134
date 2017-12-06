@@ -37,6 +37,13 @@ const savePageWraper = (file, folder) => savePage(inputURL, folder)
   .then(() => fs.readFile(file, 'utf8'))
   .then((data) => {
     expect(data).toBe(htmlOutput);
+  })
+  .then(() => {
+    const af = folder ? assetsFolder : defaultAssetsFolder;
+    return fs.readdir(af);
+  })
+  .then((files) => {
+    expect(files).toHaveLength(71);
   });
 
 beforeAll(() => fs.mkdtemp(path.join(os.tmpdir(), 'test-'))
@@ -69,7 +76,7 @@ afterEach(() => fs.exists(pathToFile)
   .then(() => fs.exists(defaultPathToFile))
   .then((exist) => {
     if (exist) {
-      // return fs.unlink(defaultPathToFile);
+      return fs.unlink(defaultPathToFile);
     }
     return false;
   })
@@ -77,13 +84,13 @@ afterEach(() => fs.exists(pathToFile)
   .then(() => rmrf(defaultAssetsFolder)));
 
 test('savePage: saving', () => {
-  expect.assertions(1);
+  expect.assertions(2);
 
   return savePageWraper(pathToFile, testFolder);
 });
 
 test('savePage: saving default', () => {
-  expect.assertions(1);
+  expect.assertions(2);
 
   return savePageWraper(defaultPathToFile);
 });
@@ -98,8 +105,3 @@ test('savePage: wrong path', () => {
       expect(e.code).toBe('ENOENT');
     });
 });
-
-
-// test('savePage: saving', () => {
-//   expect(1).toBe(1);
-// });

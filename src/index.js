@@ -29,7 +29,8 @@ const renderAssetName = (inputURL) => {
 
 const savePage = (inputURL, outputPath = process.cwd()) => {
   const pageName = renderPageName(inputURL);
-  const assetsFolder = `${pageName}_files`;
+  const assetsFolderName = `${pageName}_files`;
+  const assetsFolder = path.resolve(outputPath, assetsFolderName);
   const htmlName = `${pageName}.html`;
 
   const result = fs.exists(assetsFolder)
@@ -54,7 +55,7 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
         const assetAttr = $(el).attr('src') ? 'src' : 'href';
         const url = $(el).attr(assetAttr);
         const assetName = renderAssetName(url);
-        $(el).attr(assetAttr, `${assetsFolder}\\${assetName}`);
+        $(el).attr(assetAttr, `${assetsFolderName}${path.sep}${assetName}`);
         const resolvedURL = new URL(url, inputURL);
 
         const promise = axios({
@@ -67,6 +68,7 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
               assetsFolder,
               assetName,
             );
+            // console.log(assetPath);
             return res.data.pipe(fs.createWriteStream(assetPath));
           });
 
