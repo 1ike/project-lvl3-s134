@@ -25,7 +25,8 @@
     "eslint-plugin-jest": "*",
     "jest": "*",
     "jest-cli": "*",
-    "nock": "*"
+    "nock": "*",
+    "rimraf": "*"
   },
   "scripts": {
     "babel-node": "babel-node",
@@ -34,7 +35,7 @@
     "eslint:init": "eslint --init",
     "eslint": "eslint",
     "test": "jest --coverage",
-    "test-watch": "jest --watchAll"
+    "test-watch": "jest --no-cache --watchAll"
   },
   "jest": {
     "testEnvironment": "node",
@@ -43,6 +44,7 @@
     ],
     "watchPathIgnorePatterns": [
       "<rootDir>/node_modules/",
+      "<rootDir>/ru-hexlet-io-courses_files/",
       "<rootDir>/dist/"
     ]
   },

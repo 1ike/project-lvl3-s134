@@ -2,10 +2,10 @@ install:
 	npm i
 
 start:
-	npm run babel-node -- src/bin/page-loader.js http://api.jquery.com/
+	npm run babel-node -- src/bin/page-loader.js https://ru.hexlet.io/courses
 
 d:
-	npm run babel-node -- --inspect-brk src/bin/page-loader.js https://tpverstak.github.io/
+	npm run babel-node -- --inspect-brk src/bin/page-loader.js https://ru.hexlet.io/courses
 
 build: lint
 	npm run build
