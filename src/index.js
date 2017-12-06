@@ -6,6 +6,10 @@ import process from 'process';
 import axios from 'axios';
 import cheerio from 'cheerio';
 // import Listr from 'listr';
+import debug from 'debug';
+
+
+const log = debug('page-loader:*');
 
 const transformUrlToName = inputURL => inputURL.replace(/[^a-zA-Z0-9]+/g, '-');
 
@@ -33,20 +37,64 @@ const showErrorMessage = (e) => {
   console.log('');
 };
 
-const savePage = (inputURL, outputPath = process.cwd()) => {
+const getPromisesCol = (args, acc = [], idx = 0) => {
+  const {
+    $,
+    $assets,
+    inputURL,
+    assetsFolder,
+    assetsFolderName,
+  } = args;
+
+  if (idx === $assets.length) return acc;
+
+  const el = $assets[idx];
+  const assetAttr = $(el).attr('src') ? 'src' : 'href';
+  const url = $(el).attr(assetAttr);
+  const assetName = renderAssetName(url, inputURL);
+  const resolvedURL = new URL(url, inputURL);
+
+  const promise = axios({
+    method: 'get',
+    url: resolvedURL.toString(),
+    responseType: 'stream',
+  })
+    .then((res) => {
+      const assetPath = path.resolve(
+        assetsFolder,
+        assetName,
+      );
+      return res.data.pipe(fs.createWriteStream(assetPath));
+    })
+    .then(
+      () => {
+        const link = `${assetsFolderName}${path.sep}${assetName}`;
+        $(el).attr(assetAttr, link);
+        log('Loaded file: ', assetName);
+      },
+      showErrorMessage,
+    );
+
+  return getPromisesCol(args, [...acc, promise], idx + 1);
+};
+
+
+export default (inputURL, outputPath = process.cwd()) => {
+  let $;
   const pageName = renderPageName(inputURL);
   const assetsFolderName = `${pageName}_files`;
   const assetsFolder = path.resolve(outputPath, assetsFolderName);
   const htmlName = `${pageName}.html`;
+  const pathToFile = path.join(outputPath, htmlName);
 
-  const result = fs.exists(assetsFolder)
+  return fs.exists(assetsFolder)
     .then((exist) => {
       if (exist) return true;
       return fs.mkdir(assetsFolder);
     })
     .then(() => axios.get(inputURL))
     .then((response) => {
-      const $ = cheerio.load(response.data);
+      $ = cheerio.load(response.data);
       const $assets = $('[src]')
         .add('[href]')
         .filter((i, el) => {
@@ -54,41 +102,19 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
           return targets.indexOf(el.tagName) !== -1;
         });
 
-      const getPromisesCol = (col, acc = [], idx = 0) => {
-        if (idx === col.length) return acc;
-
-        const el = col[idx];
-        const assetAttr = $(el).attr('src') ? 'src' : 'href';
-        const url = $(el).attr(assetAttr);
-        const assetName = renderAssetName(url, inputURL);
-        const resolvedURL = new URL(url, inputURL);
-
-        const promise = axios({
-          method: 'get',
-          url: resolvedURL.toString(),
-          responseType: 'stream',
-        })
-          .then((res) => {
-            const assetPath = path.resolve(
-              assetsFolder,
-              assetName,
-            );
-            return res.data.pipe(fs.createWriteStream(assetPath));
-          })
-          .then(
-            () => {
-              $(el).attr(assetAttr, `${assetsFolderName}${path.sep}${assetName}`);
-            },
-            showErrorMessage,
-          );
-
-        return getPromisesCol(col, [...acc, promise], idx + 1);
+      const args = {
+        $,
+        $assets,
+        inputURL,
+        assetsFolder,
+        assetsFolderName,
       };
-      const promisesCol = getPromisesCol($assets);
+      const promisesCol = getPromisesCol(args);
 
-      const pathToFile = path.join(outputPath, htmlName);
-      return Promise.all(promisesCol)
-        .then(() => fs.writeFile(pathToFile, $.html()));
+      return Promise.all(promisesCol);
+    })
+    .then(() => {
+      fs.writeFile(pathToFile, $.html());
     })
     .then(() => {
       console.log(`Page was downloaded as '${htmlName}'`);
@@ -97,8 +123,4 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
       showErrorMessage(e);
       throw e;
     });
-
-  return result;
 };
-
-export default savePage;
