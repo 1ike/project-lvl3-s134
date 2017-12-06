@@ -68,7 +68,6 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
               assetsFolder,
               assetName,
             );
-            // console.log(assetPath);
             return res.data.pipe(fs.createWriteStream(assetPath));
           });
 

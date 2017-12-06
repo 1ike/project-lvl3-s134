@@ -14,6 +14,7 @@ Using GIT:
 $ git clone https://github.com/1ike/project-lvl3-s134.git
 $ cd ~/projects/my-page-loader  # go into the package directory
 $ make build                    # just do it
+$ npm i                         # install dependencies
 $ npm link                      # creates global link
 $ cd ~/projects/my-other-app    # go into some other package directory.
 $ npm link page-loader          # link-install the package
