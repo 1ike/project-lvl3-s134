@@ -18,13 +18,19 @@ const renderPageName = (inputURL) => {
   return stage3;
 };
 
-const renderAssetName = (inputURL) => {
-  const { pathname } = new URL(inputURL);
+const renderAssetName = (url, inputURL) => {
+  const { pathname } = new URL(url, inputURL);
   const { dir, base } = path.parse(pathname);
   const stage1 = transformUrlToName(dir);
   // const stage2 = stage1.replace(/^-/g, '');
 
   return `${stage1}-${base}`;
+};
+
+const showErrorMessage = (e) => {
+  console.log('');
+  console.log(e.message);
+  console.log('');
 };
 
 const savePage = (inputURL, outputPath = process.cwd()) => {
@@ -54,8 +60,7 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
         const el = col[idx];
         const assetAttr = $(el).attr('src') ? 'src' : 'href';
         const url = $(el).attr(assetAttr);
-        const assetName = renderAssetName(url);
-        $(el).attr(assetAttr, `${assetsFolderName}${path.sep}${assetName}`);
+        const assetName = renderAssetName(url, inputURL);
         const resolvedURL = new URL(url, inputURL);
 
         const promise = axios({
@@ -69,7 +74,13 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
               assetName,
             );
             return res.data.pipe(fs.createWriteStream(assetPath));
-          });
+          })
+          .then(
+            () => {
+              $(el).attr(assetAttr, `${assetsFolderName}${path.sep}${assetName}`);
+            },
+            showErrorMessage,
+          );
 
         return getPromisesCol(col, [...acc, promise], idx + 1);
       };
@@ -83,7 +94,7 @@ const savePage = (inputURL, outputPath = process.cwd()) => {
       console.log(`Page was downloaded as '${htmlName}'`);
     })
     .catch((e) => {
-      console.log(e.message);
+      showErrorMessage(e);
       throw e;
     });
 
