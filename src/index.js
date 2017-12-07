@@ -8,10 +8,11 @@ import cheerio from 'cheerio';
 // import Listr from 'listr';
 import debug from 'debug';
 
+import rmrf from './lib';
+
 const log = {};
 log.result = debug('page-loader:result');
 log.asset = debug('page-loader:asset');
-log.errors = debug('page-loader:errors');
 
 const transformUrlToName = inputURL => inputURL.replace(/[^a-zA-Z0-9]+/g, '-');
 
@@ -35,7 +36,28 @@ const renderAssetName = (url, inputURL) => {
 
 const showMessage = (message, type = 'result') => {
   log[type](message);
-  console.log('');
+  console.log();
+};
+
+const showErrorMessage = (e) => {
+  switch (e.code) {
+    case 'ENOENT':
+      console.error(`No such directory: ${path.dirname(e.path)}`);
+      console.error('Check and correct output directory parameter. Or create this directory.');
+      break;
+    case 'ENOTFOUND':
+      console.error(`Server not found for URL: ${e.config.url}`);
+      console.error('Check and correct URL parameter.');
+      break;
+    default:
+      if (e.response.status) {
+        const { status, statusText: text } = e.response;
+        console.error(`Status ${status} (${text}): ${e.config.url}`);
+      } else {
+        console.error(e);
+      }
+  }
+  console.error();
 };
 
 const prepareAssetsCol = ($, rules) => {
@@ -73,26 +95,22 @@ const getPromisesCol = (args, acc = [], idx = 0) => {
   const url = $(elem).attr(attr);
   const assetName = renderAssetName(url, inputURL);
   const resolvedURL = (new URL(url, inputURL)).toString();
+  const assetPath = path.resolve(assetsFolder, assetName);
 
-  const promise = axios({
-    method: 'get',
-    url: resolvedURL,
-    responseType: 'stream',
-  })
-    .then((res) => {
-      const assetPath = path.resolve(
-        assetsFolder,
-        assetName,
-      );
-      return res.data.pipe(fs.createWriteStream(assetPath));
-    })
+  const promise = rmrf(assetPath)
+    .then(() => axios({
+      method: 'get',
+      url: resolvedURL,
+      responseType: 'stream',
+    }))
+    .then(res => res.data.pipe(fs.createWriteStream(assetPath)))
     .then(
       () => {
         const link = `${assetsFolderName}${path.sep}${assetName}`;
         $(elem).attr(attr, link);
-        showMessage(`Loaded file: ${resolvedURL}`, 'asset');
+        // showMessage(`Loaded file: ${resolvedURL}`, 'asset');
       },
-      showMessage,
+      showErrorMessage,
     );
 
   return getPromisesCol(args, [...acc, promise], idx + 1);
@@ -133,17 +151,18 @@ export default (inputURL, outputPath = process.cwd()) => {
 
       return Promise.all(promisesCol);
     })
+    .then(() => rmrf(pathToFile))
     .then(() => {
       fs.writeFile(pathToFile, $.html());
     })
     .then(() => {
       const message = `Page was downloaded as '${htmlName}'`;
       showMessage(message);
-      // process.exitCode = 0;
+      process.exitCode = 0;
     })
     .catch((e) => {
-      showMessage(e.message, 'errors');
-      // process.exitCode = 1;
+      showErrorMessage(e);
+      process.exitCode = 1;
       throw e;
     });
 };

@@ -5,17 +5,10 @@ import path from 'path';
 import process from 'process';
 
 import nock from 'nock';
-import rimraf from 'rimraf';
 
+import rmrf from '../src/lib';
 import savePage from '../src';
 
-
-const rmrf = f => new Promise((resolve, reject) => {
-  rimraf(f, (e) => {
-    if (e) reject(e);
-    resolve();
-  });
-});
 
 const inputURL = 'https://ru.hexlet.io/courses';
 
@@ -96,12 +89,38 @@ test('savePage: saving default', () => {
 });
 
 test('savePage: wrong path', () => {
-  const outputPath = '__test__';
+  const wrongPath = '__test__';
 
   expect.assertions(1);
 
-  return savePage(inputURL, outputPath)
+  return savePage(inputURL, wrongPath)
     .catch((e) => {
       expect(e.code).toBe('ENOENT');
+    });
+});
+
+test('savePage: wrong url (server)', () => {
+  const wrongURL = 'https://ru.hexlet.ios/courses';
+  const { origin, pathname } = new URL(wrongURL);
+  nock(origin).get(pathname).replyWithError({ code: 'ENOTFOUND' });
+
+  expect.assertions(1);
+
+  return savePage(wrongURL, testFolder)
+    .catch((e) => {
+      expect(e.code).toBe('ENOTFOUND');
+    });
+});
+
+test('savePage: wrong url (document)', () => {
+  const wrongURL = 'https://ru.hexlet.ios/courses';
+  const { origin, pathname } = new URL(wrongURL);
+  nock(origin).get(pathname).reply(404);
+
+  expect.assertions(1);
+
+  return savePage(wrongURL, testFolder)
+    .catch((e) => {
+      expect(e.response.status).toBe(404);
     });
 });

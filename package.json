@@ -11,7 +11,8 @@
     "commander": "*",
     "listr": "*",
     "debug": "*",
-    "mz": "*"
+    "mz": "*",
+    "rimraf": "*"
   },
   "devDependencies": {
     "babel-cli": "*",
@@ -26,8 +27,7 @@
     "eslint-plugin-jest": "*",
     "jest": "*",
     "jest-cli": "*",
-    "nock": "*",
-    "rimraf": "*"
+    "nock": "*"
   },
   "scripts": {
     "babel-node": "babel-node",
