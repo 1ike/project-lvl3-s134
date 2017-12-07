@@ -31,9 +31,8 @@ const renderAssetName = (url, inputURL) => {
   return `${stage1}-${base}`;
 };
 
-const showErrorMessage = (e) => {
-  console.log('');
-  console.log(e.message);
+const showMessage = (message) => {
+  log(message);
   console.log('');
 };
 
@@ -89,9 +88,9 @@ const getPromisesCol = (args, acc = [], idx = 0) => {
       () => {
         const link = `${assetsFolderName}${path.sep}${assetName}`;
         $(elem).attr(attr, link);
-        log('Loaded file: ', assetName);
+        // log('Loaded file: ', assetName);
       },
-      showErrorMessage,
+      showMessage,
     );
 
   return getPromisesCol(args, [...acc, promise], idx + 1);
@@ -136,10 +135,11 @@ export default (inputURL, outputPath = process.cwd()) => {
       fs.writeFile(pathToFile, $.html());
     })
     .then(() => {
-      console.log(`Page was downloaded as '${htmlName}'`);
+      const message = `Page was downloaded as '${htmlName}'`;
+      showMessage(message);
     })
     .catch((e) => {
-      showErrorMessage(e);
+      showMessage(e.message);
       throw e;
     });
 };
