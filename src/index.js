@@ -37,20 +37,39 @@ const showErrorMessage = (e) => {
   console.log('');
 };
 
+const prepareAssetsCol = ($, rules) => {
+  const assets = rules.reduce((acc, item) => {
+    const { attr, tags } = item;
+
+    const $assets = $(`[${attr}]`)
+      .filter((i, el) => tags.indexOf(el.tagName) !== -1);
+
+    const addToCol = ($col, col = [], idx = 0) => {
+      if (idx === $col.length) return col;
+      const val = { attr, elem: $col[idx] };
+
+      return addToCol($col, [...col, val], idx + 1);
+    };
+
+    return [...acc, ...addToCol($assets)];
+  }, []);
+
+  return assets;
+};
+
 const getPromisesCol = (args, acc = [], idx = 0) => {
   const {
     $,
-    $assets,
+    assets,
     inputURL,
     assetsFolder,
     assetsFolderName,
   } = args;
 
-  if (idx === $assets.length) return acc;
+  if (idx === assets.length) return acc;
 
-  const el = $assets[idx];
-  const assetAttr = $(el).attr('src') ? 'src' : 'href';
-  const url = $(el).attr(assetAttr);
+  const { attr, elem } = assets[idx];
+  const url = $(elem).attr(attr);
   const assetName = renderAssetName(url, inputURL);
   const resolvedURL = new URL(url, inputURL);
 
@@ -69,7 +88,7 @@ const getPromisesCol = (args, acc = [], idx = 0) => {
     .then(
       () => {
         const link = `${assetsFolderName}${path.sep}${assetName}`;
-        $(el).attr(assetAttr, link);
+        $(elem).attr(attr, link);
         log('Loaded file: ', assetName);
       },
       showErrorMessage,
@@ -95,16 +114,16 @@ export default (inputURL, outputPath = process.cwd()) => {
     .then(() => axios.get(inputURL))
     .then((response) => {
       $ = cheerio.load(response.data);
-      const $assets = $('[src]')
-        .add('[href]')
-        .filter((i, el) => {
-          const targets = ['link', 'script', 'img'];
-          return targets.indexOf(el.tagName) !== -1;
-        });
+
+      const assetsRules = [
+        { attr: 'src', tags: ['img', 'script'] },
+        { attr: 'href', tags: ['link'] },
+      ];
+      const assets = prepareAssetsCol($, assetsRules);
 
       const args = {
         $,
-        $assets,
+        assets,
         inputURL,
         assetsFolder,
         assetsFolderName,
