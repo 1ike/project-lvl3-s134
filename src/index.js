@@ -8,8 +8,10 @@ import cheerio from 'cheerio';
 // import Listr from 'listr';
 import debug from 'debug';
 
-
-const log = debug('page-loader:*');
+const log = {};
+log.result = debug('page-loader:result');
+log.asset = debug('page-loader:asset');
+log.errors = debug('page-loader:errors');
 
 const transformUrlToName = inputURL => inputURL.replace(/[^a-zA-Z0-9]+/g, '-');
 
@@ -31,8 +33,8 @@ const renderAssetName = (url, inputURL) => {
   return `${stage1}-${base}`;
 };
 
-const showMessage = (message) => {
-  log(message);
+const showMessage = (message, type = 'result') => {
+  log[type](message);
   console.log('');
 };
 
@@ -70,11 +72,11 @@ const getPromisesCol = (args, acc = [], idx = 0) => {
   const { attr, elem } = assets[idx];
   const url = $(elem).attr(attr);
   const assetName = renderAssetName(url, inputURL);
-  const resolvedURL = new URL(url, inputURL);
+  const resolvedURL = (new URL(url, inputURL)).toString();
 
   const promise = axios({
     method: 'get',
-    url: resolvedURL.toString(),
+    url: resolvedURL,
     responseType: 'stream',
   })
     .then((res) => {
@@ -88,7 +90,7 @@ const getPromisesCol = (args, acc = [], idx = 0) => {
       () => {
         const link = `${assetsFolderName}${path.sep}${assetName}`;
         $(elem).attr(attr, link);
-        // log('Loaded file: ', assetName);
+        showMessage(`Loaded file: ${resolvedURL}`, 'asset');
       },
       showMessage,
     );
@@ -137,9 +139,11 @@ export default (inputURL, outputPath = process.cwd()) => {
     .then(() => {
       const message = `Page was downloaded as '${htmlName}'`;
       showMessage(message);
+      // process.exitCode = 0;
     })
     .catch((e) => {
-      showMessage(e.message);
+      showMessage(e.message, 'errors');
+      // process.exitCode = 1;
       throw e;
     });
 };
