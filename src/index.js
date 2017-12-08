@@ -79,7 +79,7 @@ const getTasks = (args) => {
         const getStreamPromise = (read, write) => new Promise((resolve, reject) => {
           write.on('error', reject);
           write.on('finish', () => {
-            const link = `${assetsFolderName}${path.sep}${assetName}`;
+            const link = `${assetsFolderName}/${assetName}`;
             $(elem).attr(attr, link);
             resolve();
           });
