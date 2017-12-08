@@ -92,7 +92,7 @@ const getTasks = (args) => {
       title: resolvedURL,
       task: () => promise,
     });
-  }, new Listr());
+  }, new Listr({ concurrent: 100, exitOnError: false }));
 };
 
 
@@ -131,7 +131,7 @@ export default (inputURL, outputPath = process.cwd()) => {
       const tasks = getTasks(args);
       const { _tasks } = tasks;
       log('Promises collection length: ', _tasks.length);
-      return tasks.run();
+      return tasks.run().catch(() => true);
     })
     .then(() => rmrf(pathToFile))
     .then(() => fs.writeFile(pathToFile, $.html()))
