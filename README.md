@@ -1,4 +1,5 @@
 # page loader
+!!! **no more than a learning project** !!!
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/11369a6982008fc1906e/maintainability)](https://codeclimate.com/github/1ike/project-lvl3-s134/maintainability)
 [![Build Status](https://travis-ci.org/1ike/project-lvl3-s134.svg?branch=master)](https://travis-ci.org/1ike/project-lvl3-s134)
