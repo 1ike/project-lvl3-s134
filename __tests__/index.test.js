@@ -36,7 +36,7 @@ const savePageWraper = (file, folder) => savePage(inputURL, folder)
     return fs.readdir(af);
   })
   .then((files) => {
-    expect(files).toHaveLength(71);
+    expect(files).toHaveLength(61);
   });
 
 beforeAll(() => fs.mkdtemp(path.join(os.tmpdir(), 'test-'))

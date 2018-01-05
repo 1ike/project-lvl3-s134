@@ -4,7 +4,7 @@
 <script type="text/javascript">var _rollbarConfig = {"accessToken":"fc27636027d0460bbc1578d97d0d27ad","captureUncaught":true,"payload":{"client":{"source_map_enabled":true,"code_version":null,"guess_uncaught_frames":true},"environment":"production","person":{"id":null,"username":null,"email":null}}};</script>
 <script type="text/javascript">!function(r){function o(n){if(e[n])return e[n].exports;var t=e[n]={exports:{},id:n,loaded:!1};return r[n].call(t.exports,t,t.exports,o),t.loaded=!0,t.exports}var e={};return o.m=r,o.c=e,o.p="",o(0)}([function(r,o,e){"use strict";var n=e(1),t=e(4);_rollbarConfig=_rollbarConfig||{},_rollbarConfig.rollbarJsUrl=_rollbarConfig.rollbarJsUrl||"https://cdnjs.cloudflare.com/ajax/libs/rollbar.js/2.2.3/rollbar.min.js",_rollbarConfig.async=void 0===_rollbarConfig.async||_rollbarConfig.async;var a=n.setupShim(window,_rollbarConfig),l=t(_rollbarConfig);window.rollbar=n.Rollbar,a.loadFull(window,document,!_rollbarConfig.async,_rollbarConfig,l)},function(r,o,e){"use strict";function n(r){return function(){try{return r.apply(this,arguments)}catch(r){try{console.error("[Rollbar]: Internal error",r)}catch(r){}}}}function t(r,o){this.options=r,this._rollbarOldOnError=null;var e=s++;this.shimId=function(){return e},window&&window._rollbarShims&&(window._rollbarShims[e]={handler:o,messages:[]})}function a(r,o){var e=o.globalAlias||"Rollbar";if("object"==typeof r[e])return r[e];r._rollbarShims={},r._rollbarWrappedError=null;var t=new p(o);return n(function(){o.captureUncaught&&(t._rollbarOldOnError=r.onerror,i.captureUncaughtExceptions(r,t,!0),i.wrapGlobals(r,t,!0)),o.captureUnhandledRejections&&i.captureUnhandledRejections(r,t,!0);var n=o.autoInstrument;return(void 0===n||n===!0||"object"==typeof n&&n.network)&&r.addEventListener&&(r.addEventListener("load",t.captureLoad.bind(t)),r.addEventListener("DOMContentLoaded",t.captureDomContentLoaded.bind(t))),r[e]=t,t})()}function l(r){return n(function(){var o=this,e=Array.prototype.slice.call(arguments,0),n={shim:o,method:r,args:e,ts:new Date};window._rollbarShims[this.shimId()].messages.push(n)})}var i=e(2),s=0,d=e(3),c=function(r,o){return new t(r,o)},p=d.bind(null,c);t.prototype.loadFull=function(r,o,e,t,a){var l=function(){var o;if(void 0===r._rollbarDidLoad){o=new Error("rollbar.js did not load");for(var e,n,t,l,i=0;e=r._rollbarShims[i++];)for(e=e.messages||[];n=e.shift();)for(t=n.args||[],i=0;i<t.length;++i)if(l=t[i],"function"==typeof l){l(o);break}}"function"==typeof a&&a(o)},i=!1,s=o.createElement("script"),d=o.getElementsByTagName("script")[0],c=d.parentNode;s.crossOrigin="",s.src=t.rollbarJsUrl,e||(s.async=!0),s.onload=s.onreadystatechange=n(function(){if(!(i||this.readyState&&"loaded"!==this.readyState&&"complete"!==this.readyState)){s.onload=s.onreadystatechange=null;try{c.removeChild(s)}catch(r){}i=!0,l()}}),c.insertBefore(s,d)},t.prototype.wrap=function(r,o,e){try{var n;if(n="function"==typeof o?o:function(){return o||{}},"function"!=typeof r)return r;if(r._isWrap)return r;if(!r._rollbar_wrapped&&(r._rollbar_wrapped=function(){e&&"function"==typeof e&&e.apply(this,arguments);try{return r.apply(this,arguments)}catch(e){var o=e;throw"string"==typeof o&&(o=new String(o)),o._rollbarContext=n()||{},o._rollbarContext._wrappedSource=r.toString(),window._rollbarWrappedError=o,o}},r._rollbar_wrapped._isWrap=!0,r.hasOwnProperty))for(var t in r)r.hasOwnProperty(t)&&(r._rollbar_wrapped[t]=r[t]);return r._rollbar_wrapped}catch(o){return r}};for(var u="log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,captureDomContentLoaded,captureLoad".split(","),f=0;f<u.length;++f)t.prototype[u[f]]=l(u[f]);r.exports={setupShim:a,Rollbar:p}},function(r,o){"use strict";function e(r,o,e){if(r){var t;"function"==typeof o._rollbarOldOnError?t=o._rollbarOldOnError:r.onerror&&!r.onerror.belongsToShim&&(t=r.onerror,o._rollbarOldOnError=t);var a=function(){var e=Array.prototype.slice.call(arguments,0);n(r,o,t,e)};a.belongsToShim=e,r.onerror=a}}function n(r,o,e,n){r._rollbarWrappedError&&(n[4]||(n[4]=r._rollbarWrappedError),n[5]||(n[5]=r._rollbarWrappedError._rollbarContext),r._rollbarWrappedError=null),o.handleUncaughtException.apply(o,n),e&&e.apply(r,n)}function t(r,o,e){if(r){"function"==typeof r._rollbarURH&&r._rollbarURH.belongsToShim&&r.removeEventListener("unhandledrejection",r._rollbarURH);var n=function(r){var e=r.reason,n=r.promise,t=r.detail;!e&&t&&(e=t.reason,n=t.promise),o&&o.handleUnhandledRejection&&o.handleUnhandledRejection(e,n)};n.belongsToShim=e,r._rollbarURH=n,r.addEventListener("unhandledrejection",n)}}function a(r,o,e){if(r){var n,t,a="EventTarget,Window,Node,ApplicationCache,AudioTrackList,ChannelMergerNode,CryptoOperation,EventSource,FileReader,HTMLUnknownElement,IDBDatabase,IDBRequest,IDBTransaction,KeyOperation,MediaController,MessagePort,ModalWindow,Notification,SVGElementInstance,Screen,TextTrack,TextTrackCue,TextTrackList,WebSocket,WebSocketWorker,Worker,XMLHttpRequest,XMLHttpRequestEventTarget,XMLHttpRequestUpload".split(",");for(n=0;n<a.length;++n)t=a[n],r[t]&&r[t].prototype&&l(o,r[t].prototype,e)}}function l(r,o,e){if(o.hasOwnProperty&&o.hasOwnProperty("addEventListener")){for(var n=o.addEventListener;n._rollbarOldAdd&&n.belongsToShim;)n=n._rollbarOldAdd;var t=function(o,e,t){n.call(this,o,r.wrap(e),t)};t._rollbarOldAdd=n,t.belongsToShim=e,o.addEventListener=t;for(var a=o.removeEventListener;a._rollbarOldRemove&&a.belongsToShim;)a=a._rollbarOldRemove;var l=function(r,o,e){a.call(this,r,o&&o._rollbar_wrapped||o,e)};l._rollbarOldRemove=a,l.belongsToShim=e,o.removeEventListener=l}}r.exports={captureUncaughtExceptions:e,captureUnhandledRejections:t,wrapGlobals:a}},function(r,o){"use strict";function e(r,o){this.impl=r(o,this),this.options=o,n(e.prototype)}function n(r){for(var o=function(r){return function(){var o=Array.prototype.slice.call(arguments,0);if(this.impl[r])return this.impl[r].apply(this.impl,o)}},e="log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,_createItem,wrap,loadFull,shimId,captureDomContentLoaded,captureLoad".split(","),n=0;n<e.length;n++)r[e[n]]=o(e[n])}e.prototype._swapAndProcessMessages=function(r,o){this.impl=r(this.options);for(var e,n,t;e=o.shift();)n=e.method,t=e.args,this[n]&&"function"==typeof this[n]&&("captureDomContentLoaded"===n||"captureLoad"===n?this[n].apply(this,[t[0],e.ts]):this[n].apply(this,t));return this},r.exports=e},function(r,o){"use strict";r.exports=function(r){return function(o){if(!o&&!window._rollbarInitialized){r=r||{};for(var e,n,t=r.globalAlias||"Rollbar",a=window.rollbar,l=function(r){return new a(r)},i=0;e=window._rollbarShims[i++];)n||(n=e.handler),e.handler._swapAndProcessMessages(l,e.messages);window[t]=n,window._rollbarInitialized=!0}}}}]);
 </script>
-<link rel="stylesheet" media="all" href="ru-hexlet-io-courses_files/-assets-application-a2d750edbbb6e85893313339789d5af1dc31696f576a2513317d26da434f682d.css">
+<link rel="stylesheet" media="all" href="https://cdn2.hexlet.io/assets/application-a2d750edbbb6e85893313339789d5af1dc31696f576a2513317d26da434f682d.css">
 <title>&#x41A;&#x443;&#x440;&#x441;&#x44B; - Hexlet.io</title>
 <link rel="shortcut icon" type="image/x-icon" href="ru-hexlet-io-courses_files/-assets-icons-default-favicon-8fa102c058afb01de5016a155d7db433283dc7e08ddc3c4d1aef527c1b8502b6.ico">
 <link rel="shortcut icon" type="image/png" href="ru-hexlet-io-courses_files/-assets-icons-default-favicon-196x196-422632c0ef41e9b13dd7ea89f1764e860d225ca3c20502b966a00c0039409a75.png" sizes="196x196">
@@ -273,7 +273,7 @@ Hexlet Guides
 </div>
 <div class="col-lg-3 col-sm-6 col-12 mb-5">
 <div class="card">
-<a href="/courses/js-functions"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: &#x424;&#x443;&#x43D;&#x43A;&#x446;&#x438;&#x438;" src="ru-hexlet-io-courses_files/-attachments-8328f0515cbcdff5c2b5ce729f6e4fdb13aaa43c-store-84c1020093cce3de7e64f6df0a5c14561d8ebefa3770e5008c2cf6750a3c-image.png">
+<a href="/courses/js-functions"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: &#x424;&#x443;&#x43D;&#x43A;&#x446;&#x438;&#x438;" src="https://cdn2.hexlet.io/attachments/8328f0515cbcdff5c2b5ce729f6e4fdb13aaa43c/store/84c1020093cce3de7e64f6df0a5c14561d8ebefa3770e5008c2cf6750a3c/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/js-functions">JS: &#x424;&#x443;&#x43D;&#x43A;&#x446;&#x438;&#x438;</a></h3>
 </div>
@@ -357,7 +357,7 @@ Hexlet Guides
 </div>
 <div class="col-lg-3 col-sm-6 col-12 mb-5">
 <div class="card">
-<a href="/courses/js-dom"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: DOM API" src="ru-hexlet-io-courses_files/-attachments-83fbfdfcebc9ed1b23979a8bbb8081764131ce2c-store-3b73aaf3c19cd5e978291200c8f8d9c31cedaf683f0aab70971b7ae96212-image.png">
+<a href="/courses/js-dom"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: DOM API" src="https://cdn2.hexlet.io/attachments/83fbfdfcebc9ed1b23979a8bbb8081764131ce2c/store/3b73aaf3c19cd5e978291200c8f8d9c31cedaf683f0aab70971b7ae96212/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/js-dom">JS: DOM API</a></h3>
 </div>
@@ -366,7 +366,7 @@ Hexlet Guides
 </div>
 <div class="col-lg-3 col-sm-6 col-12 mb-5">
 <div class="card">
-<a href="/courses/js-react"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: React" src="ru-hexlet-io-courses_files/-attachments-e455ba3d48a70d1f69c7453b1d29c2dc35d55613-store-01bbf3c9d618902c88286872404b303071a7ead497ccd6e4154b941ffec8-image.png">
+<a href="/courses/js-react"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: React" src="https://cdn2.hexlet.io/attachments/e455ba3d48a70d1f69c7453b1d29c2dc35d55613/store/01bbf3c9d618902c88286872404b303071a7ead497ccd6e4154b941ffec8/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/js-react">JS: React</a></h3>
 </div>
@@ -375,7 +375,7 @@ Hexlet Guides
 </div>
 <div class="col-lg-3 col-sm-6 col-12 mb-5">
 <div class="card">
-<a href="/courses/js-trees"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: &#x414;&#x435;&#x440;&#x435;&#x432;&#x44C;&#x44F;" src="ru-hexlet-io-courses_files/-attachments-10aa559f27eb2ed9e5f7d6a275066f7e746162e5-store-61e5919032d368cf1419bb61eaa57514b34b583d14008175df8e11b72eaf-image.png">
+<a href="/courses/js-trees"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: &#x414;&#x435;&#x440;&#x435;&#x432;&#x44C;&#x44F;" src="https://cdn2.hexlet.io/attachments/10aa559f27eb2ed9e5f7d6a275066f7e746162e5/store/61e5919032d368cf1419bb61eaa57514b34b583d14008175df8e11b72eaf/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/js-trees">JS: &#x414;&#x435;&#x440;&#x435;&#x432;&#x44C;&#x44F;</a></h3>
 </div>
@@ -387,7 +387,7 @@ Hexlet Guides
 <div class="hexlet-ribbon-wrapper-green">
 <div class="hexlet-ribbon-green">FREE</div>
 </div>
-<a href="/courses/html"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="&#x41E;&#x441;&#x43D;&#x43E;&#x432;&#x44B; HTML, CSS &#x438; &#x432;&#x435;&#x431;-&#x434;&#x438;&#x437;&#x430;&#x439;&#x43D;&#x430;" src="ru-hexlet-io-courses_files/-attachments-c2f0ffdc3f5cab8da10635988f9fe0efccf79530-store-7c24ba97fee70005f8152de5682e185af5768511e41fa5547f319a0a70de-image.png">
+<a href="/courses/html"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="&#x41E;&#x441;&#x43D;&#x43E;&#x432;&#x44B; HTML, CSS &#x438; &#x432;&#x435;&#x431;-&#x434;&#x438;&#x437;&#x430;&#x439;&#x43D;&#x430;" src="https://cdn2.hexlet.io/attachments/c2f0ffdc3f5cab8da10635988f9fe0efccf79530/store/7c24ba97fee70005f8152de5682e185af5768511e41fa5547f319a0a70de/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/html">&#x41E;&#x441;&#x43D;&#x43E;&#x432;&#x44B; HTML, CSS &#x438; &#x432;&#x435;&#x431;-&#x434;&#x438;&#x437;&#x430;&#x439;&#x43D;&#x430;</a></h3>
 </div>
@@ -396,7 +396,7 @@ Hexlet Guides
 </div>
 <div class="col-lg-3 col-sm-6 col-12 mb-5">
 <div class="card">
-<a href="/courses/js-redux"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: Redux (React)" src="ru-hexlet-io-courses_files/-attachments-29fa47c5fc64f900900ddc645fac719577d7943c-store-f1d26d0428fcd86e54606e7d59cd2522d554827c29dc12b91ed639de4bb7-image.png">
+<a href="/courses/js-redux"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="JS: Redux (React)" src="https://cdn2.hexlet.io/attachments/29fa47c5fc64f900900ddc645fac719577d7943c/store/f1d26d0428fcd86e54606e7d59cd2522d554827c29dc12b91ed639de4bb7/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/js-redux">JS: Redux (React)</a></h3>
 </div>
@@ -582,7 +582,7 @@ Hexlet Guides
 <div class="hexlet-ribbon-wrapper-green">
 <div class="hexlet-ribbon-green">FREE</div>
 </div>
-<a href="/courses/introduction_to_programming"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="&#x412;&#x432;&#x435;&#x434;&#x435;&#x43D;&#x438;&#x435; &#x432; &#x43F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x438;&#x440;&#x43E;&#x432;&#x430;&#x43D;&#x438;&#x435;" src="ru-hexlet-io-courses_files/-attachments-9144063f7f4106b3d1b1274d7d7cb5ec2401bca0-store-017bada4be03062f5a1cfa92e1fdf44adf63c44220ff5f959fddeef8be08-image.png">
+<a href="/courses/introduction_to_programming"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="&#x412;&#x432;&#x435;&#x434;&#x435;&#x43D;&#x438;&#x435; &#x432; &#x43F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x438;&#x440;&#x43E;&#x432;&#x430;&#x43D;&#x438;&#x435;" src="https://cdn2.hexlet.io/attachments/9144063f7f4106b3d1b1274d7d7cb5ec2401bca0/store/017bada4be03062f5a1cfa92e1fdf44adf63c44220ff5f959fddeef8be08/image.png">
 </a><div class="card-body text-center">
 <h3 class="h5 mb-0"><a href="/courses/introduction_to_programming">&#x412;&#x432;&#x435;&#x434;&#x435;&#x43D;&#x438;&#x435; &#x432; &#x43F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x438;&#x440;&#x43E;&#x432;&#x430;&#x43D;&#x438;&#x435;</a></h3>
 </div>
@@ -837,8 +837,8 @@ Hexlet
 </div>
 </footer>
 <script src="ru-hexlet-io-courses_files/-v2-polyfill.min.js"></script>
-<script src="ru-hexlet-io-courses_files/-assets-essential-ccbcd67012767621e28415db93e4a25d846dd8e284e6f55fa72e75b771ee25dc.js"></script>
-<script src="ru-hexlet-io-courses_files/-assets-application-bc75d522588ebeeec18a2da74785ce9f8b6af2a5256ac7b0d1df6e0b6719be69.js"></script>
+<script src="https://cdn2.hexlet.io/assets/essential-ccbcd67012767621e28415db93e4a25d846dd8e284e6f55fa72e75b771ee25dc.js"></script>
+<script src="https://cdn2.hexlet.io/assets/application-bc75d522588ebeeec18a2da74785ce9f8b6af2a5256ac7b0d1df6e0b6719be69.js"></script>
 
 
 </body>
