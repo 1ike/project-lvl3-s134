@@ -9,8 +9,10 @@ import nock from 'nock';
 import rmrf from '../src/lib';
 import savePage from '../src';
 
-// There tests rely on the live web-server (inputURL),
-// they are not fo production, just for fun.
+/* There tests rely on the live web-server (inputURL),
+they are not fo production, just for fun.
+So you`ll might be need to correct "outputFixture"
+in according with current server (and outer resources) state. */
 const inputURL = 'https://ru.hexlet.io/courses';
 
 const dir = path.join(__dirname, '/__fixtures__');
